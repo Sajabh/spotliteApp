@@ -1,9 +1,10 @@
-const notification = () => {
-    return ( 
-        <view>
-            <text>Profile</text>
-        </view>
-     );
+import { View, Text } from 'react-native'
+import React from 'react'
+
+export default function notifications() {
+  return (
+    <View>
+      <Text>notifications</Text>
+    </View>
+  )
 }
- 
-export default notification;
