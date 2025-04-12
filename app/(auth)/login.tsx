@@ -43,7 +43,7 @@ export default function login() {
         <TouchableOpacity
           style={styles.googleButton}
           activeOpacity={0.8}
-          onPress={() => alert("Google Button Pressed")}
+          onPress={handleGoogleLogin}
         >
           {/* Google Button */}
           <View style={styles.googleIconContainer}>
