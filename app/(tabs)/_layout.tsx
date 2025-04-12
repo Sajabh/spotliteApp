@@ -11,7 +11,7 @@ export default function _layout() {
         tabBarShowLabel: false,
         headerShown: false,
         tabBarActiveTintColor: COLORS.primary,
-        tabBarInactiveTintColor: COLORS.gray,
+        tabBarInactiveTintColor: COLORS.grey,
         tabBarStyle: {
           position : "absolute",
           bottom: 0,
