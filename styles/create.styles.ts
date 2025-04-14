@@ -81,9 +81,11 @@ export const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.75)",
     flexDirection: "row",
     alignItems: "center",
-    padding: 8,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
     borderRadius: 8,
     gap: 6,
+    zIndex: 10,
   },
   changeImageText: {
     color: COLORS.white,

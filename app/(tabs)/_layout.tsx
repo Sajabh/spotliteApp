@@ -4,6 +4,11 @@ import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS } from "@/constants/theme";
 
+type tapOption = {
+  size: number | undefined;
+  color: string | undefined;
+};
+
 export default function _layout() {
   return (
     <Tabs
@@ -13,7 +18,7 @@ export default function _layout() {
         tabBarActiveTintColor: COLORS.primary,
         tabBarInactiveTintColor: COLORS.grey,
         tabBarStyle: {
-          position : "absolute",
+          position: "absolute",
           bottom: 0,
           left: 0,
           right: 0,
@@ -27,31 +32,41 @@ export default function _layout() {
       <Tabs.Screen
         name="index"
         options={{
-          tabBarIcon: ({size,color}) => <Ionicons name="home" size={size} color={color}/>,
+          tabBarIcon: ({ size, color }: tapOption) => (
+            <Ionicons name="home" size={size} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
         name="bookmarks"
         options={{
-          tabBarIcon: ({size,color}) => <Ionicons name="bookmark" size={size} color={color} />,
+          tabBarIcon: ({ size, color }: tapOption) => (
+            <Ionicons name="bookmark" size={size} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
         name="create"
         options={{
-          tabBarIcon: ({size,color}) => <Ionicons name="add-circle" size={size} color={color} />,
+          tabBarIcon: ({ size, color }: tapOption) => (
+            <Ionicons name="add-circle" size={size} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
         name="notifications"
         options={{
-          tabBarIcon: ({size,color}) => <Ionicons name="heart" size={size} color={color}/>,
+          tabBarIcon: ({ size, color }: tapOption) => (
+            <Ionicons name="heart" size={size} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
-          tabBarIcon: ({size,color}) => <Ionicons name="person-circle" size={size} color={color}/>,
+          tabBarIcon: ({ size, color }: tapOption) => (
+            <Ionicons name="person-circle" size={size} color={color} />
+          ),
         }}
       />
     </Tabs>
