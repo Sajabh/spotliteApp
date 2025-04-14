@@ -1,5 +1,6 @@
-import { mutation } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import { getAuthUser } from "./user";
 
 export const generateUploadUrl = mutation(async (ctx) => {
   const identity = await ctx.auth.getUserIdentity();
@@ -13,13 +14,7 @@ export const createPost = mutation({
     caption: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Unauthorized");
-    const currentUser = await ctx.db
-      .query("users")
-      .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
-      .first();
-    if (!currentUser) throw new Error("User not found");
+    const currentUser = await getAuthUser(ctx);
     /* console.log(currentUser) */
 
     const imageUrl = await ctx.storage.getUrl(args.storageId);
@@ -41,5 +36,47 @@ export const createPost = mutation({
     });
 
     return postId;
+  },
+});
+
+export const getFeedPost = query({
+  handler: async (ctx) => {
+    const currentUser = await getAuthUser(ctx); // as QueryCtx
+
+    // get all posts
+    const posts = await ctx.db.query("posts").order("desc").collect();
+
+    if (posts.length === 0) return [];
+
+    // enhance posts with userdata and interaction status
+    const postsWithInfo = await Promise.all(
+      posts.map(async (post) => {
+        const postAuthor = await ctx.db.get(post.userId);
+        const like = await ctx.db
+          .query("likes")
+          .withIndex("by_user_and_post", (q) =>
+            q.eq("userId", currentUser._id).eq("postId", post._id)
+          )
+          .first();
+        const bookmarks = await ctx.db
+          .query("bookmarks")
+          .withIndex("by_user_and_post", (q) =>
+            q.eq("userId", currentUser._id).eq("postId", post._id)
+          )
+          .first();
+
+        return {
+          ...post,
+          author: {
+            _id: postAuthor?._id,
+            username: postAuthor?.username,
+            image: postAuthor?.image,
+          },
+          isLiked: !!like,
+          isBookmarked: !!bookmarks,
+        };
+      })
+    );
+    return postsWithInfo;
   },
 });
