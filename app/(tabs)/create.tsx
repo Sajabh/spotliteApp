@@ -69,6 +69,9 @@ export default function CerateScreen() {
       
       const { storageId } = JSON.parse(uploadResults.body);
       await createPost({ storageId, caption });
+      
+      setSelectedImage(null);
+      setCaption("");
       router.push("/(tabs)");
     } catch(err) {
       console.log("Error sharing post", err);
