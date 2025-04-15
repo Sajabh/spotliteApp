@@ -9,7 +9,7 @@ import { Id } from "@/convex/_generated/dataModel";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import CommentsModal from "./CommentsModal";
-import { formatDistanceToNow } from 'date-fns'; // For "time ago" functionality
+import { formatDistanceToNow } from "date-fns"; // For "time ago" functionality
 
 type PostProps = {
   post: {
@@ -31,10 +31,14 @@ type PostProps = {
 
 export default function Post({ post }: PostProps) {
   const [isLiked, setIsLiked] = useState(post.isLiked);
+  const [isBookmarked, setIsbookmarked] = useState(post.isBookmarked);
   const [likesCount, setlikesCount] = useState(post.likes);
   const [commentsCount, setCommentsCount] = useState(post.comments);
   const [showComments, setshowComments] = useState(false);
+
   const toggleLike = useMutation(api.posts.toggleLike);
+  const toggleBookmark = useMutation(api.bookmarks.toggleBookmard);
+
   const handleLike = async () => {
     try {
       const newIsLiked = await toggleLike({ postId: post._id });
@@ -43,6 +47,11 @@ export default function Post({ post }: PostProps) {
     } catch (err) {
       console.log("Error toggling like", err);
     }
+  };
+
+  const handleBookmark = async () => {
+    const newIsBookmarded = await toggleBookmark({ postId: post._id });
+    setIsbookmarked(newIsBookmarded);
   };
 
   return (
@@ -102,8 +111,12 @@ export default function Post({ post }: PostProps) {
             />
           </TouchableOpacity>
         </View>
-        <TouchableOpacity>
-          <Ionicons name="bookmark-outline" size={22} color={COLORS.white} />
+        <TouchableOpacity onPress={handleBookmark}>
+          <Ionicons
+            name={isBookmarked ? "bookmark" : "bookmark-outline"}
+            size={22}
+            color={COLORS.white}
+          />
         </TouchableOpacity>
       </View>
 
