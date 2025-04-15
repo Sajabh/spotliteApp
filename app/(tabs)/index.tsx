@@ -33,8 +33,6 @@ export default function Index() {
     </View>
   );
 }
-{
-}
 
 const NoPostsFound = () => (
   <View
