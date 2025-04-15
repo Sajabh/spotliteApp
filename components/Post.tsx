@@ -6,10 +6,11 @@ import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS } from "@/constants/theme";
 import { Id } from "@/convex/_generated/dataModel";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import CommentsModal from "./CommentsModal";
 import { formatDistanceToNow } from "date-fns"; // For "time ago" functionality
+import { useUser } from "@clerk/clerk-expo";
 
 type PostProps = {
   post: {
@@ -38,6 +39,15 @@ export default function Post({ post }: PostProps) {
 
   const toggleLike = useMutation(api.posts.toggleLike);
   const toggleBookmark = useMutation(api.bookmarks.toggleBookmard);
+  const deletePost = useMutation(api.posts.deletePost);
+
+  const { user } = useUser(); // user x stored in Clerk
+
+  const currentUser = useQuery(
+    // user x stored in Convex
+    api.user.getUserByClerkId,
+    user ? { clerkId: user.id } : "skip"
+  );
 
   const handleLike = async () => {
     try {
@@ -52,6 +62,14 @@ export default function Post({ post }: PostProps) {
   const handleBookmark = async () => {
     const newIsBookmarded = await toggleBookmark({ postId: post._id });
     setIsbookmarked(newIsBookmarded);
+  };
+
+  const handelDelete = async () => {
+    try {
+      await deletePost({ postId: post._id });
+    } catch (error) {
+      console.log("Error deleting post:", error);
+    }
   };
 
   return (
@@ -71,9 +89,19 @@ export default function Post({ post }: PostProps) {
           </TouchableOpacity>
         </Link>
 
-        <TouchableOpacity>
-          <Ionicons name="ellipsis-horizontal" size={20} color={COLORS.white} />
-        </TouchableOpacity>
+        {post.author._id === currentUser?._id ? (
+          <TouchableOpacity onPress={handelDelete}>
+            <Ionicons name="trash-outline" size={20} color={COLORS.white} />
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity>
+            <Ionicons
+              name="ellipsis-horizontal"
+              size={20}
+              color={COLORS.white}
+            />
+          </TouchableOpacity>
+        )}
       </View>
 
       {/* IMAGE */}
