@@ -155,6 +155,16 @@ export const deletePost = mutation({
     for (const comment of comments) {
       await ctx.db.delete(comment._id);
     }
+
+    // delete associated notification
+    const notifications = await ctx.db
+      .query("notifications")
+      .withIndex("by_post", (q) => q.eq("postId", args.postId))
+      .collect();
+
+    for (const notification of notifications) {
+      await ctx.db.delete(notification._id);
+    }
     // delete associated comments
     const bookmarks = await ctx.db
       .query("bookmarks")
